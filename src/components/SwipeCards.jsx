@@ -99,20 +99,6 @@ const Card = ({
     }
   };
 
-  const removeCard = (isInterested = false) => {
-    const cardData = {
-      firstName,
-      lastName,
-      photoUrl,
-      skills,
-      age,
-      gender,
-      about,
-    };
-    isInterested ? handleInterested(id, cardData) : handleIgnore(id, cardData);
-    setCards((pv) => pv.filter((v) => v.id !== id));
-  };
-
   return (
     <motion.div
       className="absolute h-[630px] w-90 origin-bottom rounded-2xl bg-base-300 overflow-hidden shadow-2xl hover:cursor-grab active:cursor-grabbing -left-48"

@@ -2,18 +2,32 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addRequest } from "../utils/requestSlice";
+import { addRequests, removeRequests } from "../utils/requestSlice";
 
 function Requests() {
   const requests = useSelector((store) => store.requests);
   const dispatch = useDispatch();
+
+  const reviewRequests = async (status, _id) => {
+    try {
+      const res = await axios.post(
+        BASE_URL + "/request/review/" + status + "/" + _id,
+        {},
+        { withCredentials: true }
+      );
+      dispatch(removeRequests(_id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const fetchRequests = async () => {
     try {
       const res = await axios.get(BASE_URL + "/user/requests/received", {
         withCredentials: true,
       });
 
-      dispatch(addRequest(res.data.data));
+      dispatch(addRequests(res.data.data));
     } catch (err) {
       console.log(err);
     }
@@ -31,9 +45,9 @@ function Requests() {
     <div className="text-center my-10">
       <h1 className="text-bold text-white text-3xl">Connections</h1>
 
-      {requests.map((connection) => {
+      {requests.map((request) => {
         const { _id, firstName, lastName, photoUrl, age, gender, about } =
-          connection.fromUserId;
+          request.fromUserId;
 
         return (
           <div
@@ -55,8 +69,18 @@ function Requests() {
               <p>{about}</p>
             </div>
             <div>
-              <button className="btn btn-primary mx-2">Reject</button>
-              <button className="btn btn-secondary mx-2">Accept</button>
+              <button
+                className="btn btn-primary mx-2"
+                onClick={() => reviewRequests("rejected", request._id)}
+              >
+                Reject
+              </button>
+              <button
+                className="btn btn-secondary mx-2"
+                onClick={() => reviewRequests("accepted", request._id)}
+              >
+                Accept
+              </button>
             </div>
           </div>
         );

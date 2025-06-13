@@ -2,7 +2,7 @@ import SwipeCards from "./SwipeCards";
 
 function UserCard({ user, isEdit }) {
   return (
-    <div>
+    <div className="w-full h-full">
       <SwipeCards user={user} isEdit={isEdit} />
     </div>
   );

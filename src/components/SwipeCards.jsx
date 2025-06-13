@@ -15,7 +15,6 @@ const SwipeCards = ({ user, isEdit = false }) => {
 
       // Only update if the filtered data is actually different
       if (JSON.stringify(filteredUsers) !== JSON.stringify(cards)) {
-        console.log("Updating cards - filtered users:", filteredUsers.length);
         setCards(filteredUsers);
       }
     }
@@ -23,19 +22,39 @@ const SwipeCards = ({ user, isEdit = false }) => {
 
   const emptyState = useMemo(
     () => (
-      <div className="flex flex-col items-center justify-center h-50 w-80 bg-base-300 rounded-2xl shadow-lg">
-        <h3 className="text-xl font-semibold text-white mb-2">All done!</h3>
-        <p className="text-white text-center px-6">
-          You've reviewed all profiles. Check back later for more!
+      <div className="flex flex-col items-center justify-center min-h-[400px] w-full max-w-sm mx-auto bg-slate-800/50 backdrop-blur-lg border border-slate-700/50 rounded-3xl shadow-2xl p-8">
+        <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+          <svg
+            className="w-10 h-10 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-3">All Caught Up!</h3>
+        <p className="text-gray-400 text-center leading-relaxed">
+          You've reviewed all available profiles. Check back later for more
+          developers to connect with!
         </p>
+        <div className="mt-6 inline-flex items-center px-4 py-2 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full text-sm">
+          <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse mr-2"></div>
+          No more profiles
+        </div>
       </div>
     ),
     []
   );
 
   return (
-    <div className="flex h-screen w-full justify-center">
-      <div className="relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center px-4 py-8">
+      <div className="relative w-full max-w-sm">
         {cards.map((card, index) => (
           <Card
             key={card._id}
@@ -131,14 +150,11 @@ const Card = ({
     if (isEdit) return;
 
     const xValue = x.get();
-    console.log("Drag ended with x value:", xValue);
 
     if (Math.abs(xValue) > 100) {
       if (xValue > 100) {
-        console.log("Dragged right - interested");
         handleInterested("interested", _id);
       } else {
-        console.log("Dragged left - ignored");
         handleIgnore("ignored", _id);
       }
     }
@@ -173,71 +189,108 @@ const Card = ({
 
   return (
     <motion.div
-      className="absolute h-[630px] w-90 origin-bottom rounded-2xl bg-base-300 overflow-hidden shadow-2xl hover:cursor-grab active:cursor-grabbing -left-48"
+      className="absolute w-full max-w-sm h-[600px] sm:h-[650px] origin-bottom rounded-3xl bg-slate-800/50 backdrop-blur-lg border border-slate-700/50 overflow-hidden shadow-2xl hover:cursor-grab active:cursor-grabbing top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       style={cardStyle}
       animate={animateProps}
       drag={isFront && !isEdit ? "x" : false}
       dragConstraints={dragConstraints}
       onDragEnd={handleDragEnd}
     >
-      <div className="relative h-80 overflow-hidden">
+      {/* Profile Image Section */}
+      <div className="relative h-72 sm:h-80 overflow-hidden">
         <img
           src={photoUrl}
           alt={`${firstName} ${lastName}`}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-        <div className="absolute bottom-4 left-4 right-4">
-          <h2 className="text-2xl font-bold text-white mb-1">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+        {/* Profile Info Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
             {firstName} {lastName}
           </h2>
-          <div className="px-1 py-1">
-            <span className="text-sm font-medium">
+          <div className="flex items-center space-x-2">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
               {age}, {gender}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="p-6 space-y-4 pb-20">
+      {/* Content Section */}
+      <div className="p-6 space-y-6 pb-24">
+        {/* Skills Section */}
         <div>
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+          <h3 className="text-sm font-semibold text-purple-300 uppercase tracking-wide mb-3 flex items-center">
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+              />
+            </svg>
             Skills
           </h3>
           <div className="flex flex-wrap gap-2">
             {skills?.map((skill, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-blue-100 text-blue-500 text-sm font-medium rounded-full"
+                className="px-3 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30 text-sm font-medium rounded-full hover:from-purple-500/30 hover:to-pink-500/30 transition-all duration-300"
               >
                 {skill}
               </span>
             ))}
           </div>
         </div>
+
+        {/* About Section */}
         <div>
-          <h3 className="text-sm font-semibel text-gray-500 uppercase tracking-wide mb-2">
-            About
+          <h3 className="text-sm font-semibold text-purple-300 uppercase tracking-wide mb-3 flex items-center">
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
+            About Me
           </h3>
-          <p className="text-blue-300 text-sm leading-relaxed line-clamp-3">
+          <p className="text-gray-300 text-sm leading-relaxed line-clamp-4">
             {about}
           </p>
         </div>
       </div>
 
+      {/* Action Buttons - Only show on front card and when not in edit mode */}
       {isFront && !isEdit && (
-        <div className="absolute bottom-4 left-4 right-4 flex justify-center gap-6">
+        <div className="absolute bottom-6 left-6 right-6 flex justify-center gap-4">
           <button
             onClick={() => handleIgnore("ignored", _id)}
-            className="px-6 py-3 rounded-full text-red-600 border border-red-300 bg-white shadow-md hover:bg-red-50 hover:border-red-400 font-semibold transition-all duration-200 cursor-pointer"
+            className="group/btn relative overflow-hidden bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white px-8 py-3 rounded-2xl font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-red-500/25 hover:scale-105 active:scale-95 flex items-center space-x-2"
           >
-            Ignore
+            <span>Ignored</span>
+            <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700 skew-x-12"></div>
           </button>
+
           <button
             onClick={() => handleInterested("interested", _id)}
-            className="px-6 py-3 rounded-full text-green-600 border border-green-300 bg-white shadow-md hover:bg-green-50 hover:border-green-400 font-semibold transition-all duration-200 cursor-pointer"
+            className="group/btn relative overflow-hidden bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white px-8 py-3 rounded-2xl font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-green-500/25 hover:scale-105 active:scale-95 flex items-center space-x-2"
           >
-            Interested
+            <span>Interested</span>
+            <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700 skew-x-12"></div>
           </button>
         </div>
       )}
@@ -245,22 +298,27 @@ const Card = ({
       {isFront && !isEdit && (
         <>
           <motion.div
-            className="absolute top-12 left-4 transform -translate-y-1/2 bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-lg"
+            className="absolute top-16 left-6 bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-2xl font-bold text-lg shadow-2xl border-2 border-white/20"
             style={{
               rotate: -20,
               opacity: opacityLeft,
             }}
           >
-            IGNORE
+            <div className="flex items-center space-x-2">
+              <span>Ignored</span>
+            </div>
           </motion.div>
+
           <motion.div
-            className="absolute top-12 right-4 transform -translate-y-1/2 bg-green-500 text-white px-4 py-2 rounded-lg font-bold text-lg"
+            className="absolute top-16 right-6 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-2xl font-bold text-lg shadow-2xl border-2 border-white/20"
             style={{
               rotate: 20,
               opacity: opacityRight,
             }}
           >
-            INTERESTED
+            <div className="flex items-center space-x-2">
+              <span>Interested</span>
+            </div>
           </motion.div>
         </>
       )}

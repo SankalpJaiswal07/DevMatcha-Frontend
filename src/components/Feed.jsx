@@ -10,8 +10,14 @@ function Feed() {
   const feed = useSelector((store) => store.feed);
   const user = useSelector((store) => store.user);
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!user || !user._id) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
   useEffect(() => {
     const getFeed = async () => {
       if (feed !== null) return;
